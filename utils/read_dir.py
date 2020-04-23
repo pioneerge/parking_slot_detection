@@ -1,6 +1,7 @@
 import os
 
-class ReadDir():
+
+class ReadDir:
     def __init__(self,
                  base_dir,
                  subset='tracklet',

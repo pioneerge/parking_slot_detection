@@ -15,19 +15,20 @@ if cfg().network == 'vgg16':
 if cfg().network == 'mobilenet_v2':
     from model import mobilenet_v2 as nn
 
+
 def predict(args):
     # complie models
     model = nn.network()
-    # model.load_weights('3dbox_weights_1st.hdf5')
-    model.load_weights(args.w)
+    model.load_weights('3dbox_weights_mob.hdf5')
+    # model.load_weights(args.w)
 
     # KITTI_train_gen = KITTILoader(subset='training')
-    dims_avg, _ =KITTILoader(subset='tracklet').get_average_dimension()
+    dims_avg, _ = KITTILoader(subset='tracklet').get_average_dimension()
 
     # list all the validation images
     if args.a == 'training':
         all_imgs = sorted(os.listdir(test_image_dir))
-        val_index = int(len(all_imgs)* cfg().split)
+        val_index = int(len(all_imgs) * cfg().split)
         val_imgs = all_imgs[val_index:]
 
     else:
