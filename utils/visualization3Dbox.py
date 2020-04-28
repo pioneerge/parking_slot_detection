@@ -1,6 +1,7 @@
 import numpy as np
 import argparse
 import os
+import math
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.path import Path
@@ -10,6 +11,18 @@ from PIL import Image
 from utils.read_dir import ReadDir
 from config import config as cfg
 from utils.correspondece_constraint import *
+
+
+# object - list of 4 points
+def compute_distance(object1, object2):
+    distance = -1
+    for point_obj1 in object1:
+        for point_obj2 in object2:
+            tmp = math.hypot(point_obj1[0] - point_obj2[0], point_obj1[1] - point_obj2[1])
+            if distance == -1:
+                distance = tmp
+            distance = tmp if distance > tmp else distance
+    return distance
 
 
 def compute_birdviewbox(line, shape, scale):
