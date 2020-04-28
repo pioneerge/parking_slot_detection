@@ -11,10 +11,11 @@ from utils.read_dir import ReadDir
 from config import config as cfg
 from utils.correspondece_constraint import *
 
+car = ['car', 0.0, 0, 2.18, 318.0, 175.0, 484.0, 259.0, 1.6, 1.6, 3.78, -4.33, 2.62, 15.39, 3.9, 1.0]
 
 def compute_birdviewbox(line, shape, scale):
     npline = [np.float64(line[i]) for i in range(1, len(line))]
-    h = npline[7] * scale
+    # h = npline[7] * scale
     w = npline[8] * scale
     l = npline[9] * scale
     x = npline[10] * scale
@@ -33,8 +34,13 @@ def compute_birdviewbox(line, shape, scale):
     x_corners += -w / 2
     z_corners += -l / 2
 
+    # print(x_corners, "------------" ,z_corners)
+
     # bounding box in object coordinate
     corners_2D = np.array([x_corners, z_corners])
+
+    # print("\n", corners_2D)
+
     # rotate
     corners_2D = R.dot(corners_2D)
     # translation
@@ -46,6 +52,9 @@ def compute_birdviewbox(line, shape, scale):
 
     return np.vstack((corners_2D, corners_2D[0,:]))
 
+# def distance(car1, car2):
+#
+
 
 def draw_birdeyes(ax2, line_gt, line_p, shape):
     # shape = 900
@@ -53,6 +62,11 @@ def draw_birdeyes(ax2, line_gt, line_p, shape):
 
     pred_corners_2d = compute_birdviewbox(line_p, shape, scale)
     gt_corners_2d = compute_birdviewbox(line_gt, shape, scale)
+
+    default_car = compute_birdviewbox(car, shape, scale)
+
+    # print(pred_corners_2d)
+
 
     codes = [Path.LINETO] * gt_corners_2d.shape[0]
     codes[0] = Path.MOVETO
@@ -68,6 +82,12 @@ def draw_birdeyes(ax2, line_gt, line_p, shape):
     p = patches.PathPatch(pth, fill=False, color='green', label='prediction')
     ax2.add_patch(p)
 
+    codes = [Path.LINETO] * default_car.shape[0]
+    codes[0] = Path.MOVETO
+    codes[-1] = Path.CLOSEPOLY
+    pth = Path(default_car, codes)
+    p = patches.PathPatch(pth, fill=False, color='blue', label='default car')
+    ax2.add_patch(p)
 
 def compute_3Dbox(P2, line):
     obj = detectionInfo(line)
@@ -201,7 +221,7 @@ def visualization(args, image_path, label_path, calib_path, pred_path,
         for text in legend.get_texts():
             plt.setp(text, color='w')
 
-        print(dataset[index])
+        # print(dataset[index])
         if args.save == False:
             plt.show()
         else:
@@ -228,7 +248,7 @@ def main(args):
 
 if __name__ == '__main__':
     start_frame = 0
-    end_frame = 432
+    end_frame = 1
 
     parser = argparse.ArgumentParser(description='Visualize 3D bounding box on images',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)

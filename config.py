@@ -27,5 +27,5 @@ class config():
         self.batch_size = 8
 
         # set the categories
-        self.KITTI_cat = ['Car', 'Cyclist', 'Pedestrian']
-        # self.KITTI_cat = ['Car']
+        # self.KITTI_cat = ['Car', 'Cyclist', 'Pedestrian']
+        self.KITTI_cat = ['Car']

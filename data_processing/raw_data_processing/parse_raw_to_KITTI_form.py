@@ -365,7 +365,6 @@ def read_transformation_matrix(tracklet_path):
 # Read the tracklets
 def write_label(tracklet_path, label_path, image_path, transform, P2):
     for trackletObj in parseXML(os.path.join(tracklet_path, 'tracklet_labels.xml')):
-        print(trackletObj)
         for translation, rotation, state, occlusion, truncation, amtOcclusion, amtBorders, absoluteFrameNumber in trackletObj:
             print(translation, rotation, state, occlusion, truncation, amtOcclusion, amtBorders, absoluteFrameNumber)
             label_file = os.path.join(label_path, str(absoluteFrameNumber).zfill(10) + '.txt')
