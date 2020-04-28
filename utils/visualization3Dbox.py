@@ -1,6 +1,7 @@
 import numpy as np
 import argparse
 import os
+import math
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.path import Path
@@ -12,6 +13,18 @@ from config import config as cfg
 from utils.correspondece_constraint import *
 
 car = ['car', 0.0, 0, 2.18, 318.0, 175.0, 484.0, 259.0, 1.6, 1.6, 3.78, -4.33, 2.62, 15.39, 3.9, 1.0]
+
+# object - list of 4 points
+def compute_distance(object1, object2):
+    distance = -1
+    for point_obj1 in object1:
+        for point_obj2 in object2:
+            tmp = math.hypot(point_obj1[0] - point_obj2[0], point_obj1[1] - point_obj2[1])
+            if distance == -1:
+                distance = tmp
+            distance = tmp if distance > tmp else distance
+    return distance
+
 
 def compute_birdviewbox(line, shape, scale):
     npline = [np.float64(line[i]) for i in range(1, len(line))]
