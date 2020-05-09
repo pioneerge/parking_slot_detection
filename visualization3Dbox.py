@@ -13,6 +13,7 @@ from PIL import Image
 # from .. import config
 from my_config import MyConfig as cfg
 from utils.correspondece_constraint import *
+from parking_space import find_parking_space
 
 # car = ['car', 0.0, 0, 2.18, 318.0, 175.0, 484.0, 259.0, 1.6, 1.6, 3.78, -4.33, 2.62, 15.39, 3.9, 1.0]
 # cfg = config.Config
@@ -46,7 +47,6 @@ def compute_birdviewbox(line, shape, scale):
 
     x_corners = [0, l, l, 0]  # -l/2
     z_corners = [w, w, 0, 0]  # -w/2
-
 
     x_corners += -w / 2
     z_corners += -l / 2
@@ -94,12 +94,14 @@ def draw_birdeyes(ax2, line_p, shape, line_gt=None, color='green'):
 
     return pred_corners_2d
 
-    # codes = [Path.LINETO] * default_car.shape[0]
-    # codes[0] = Path.MOVETO
-    # codes[-1] = Path.CLOSEPOLY
-    # pth = Path(default_car, codes)
-    # p = patches.PathPatch(pth, fill=False, color='blue', label='default car')
-    # ax2.add_patch(p)
+
+def draw_free_slots(ax, free_slot, color='orange'):
+    codes = [Path.LINETO] * free_slot.shape[0]
+    codes[0] = Path.MOVETO
+    codes[-1] = Path.CLOSEPOLY
+    pth = Path(free_slot, codes)
+    p = patches.PathPatch(pth, fill=True, color=color, label='free space')
+    ax.add_patch(p)
 
 
 def compute_3Dbox(P2, line):
@@ -204,11 +206,12 @@ def visualization(args, image_path, label_path, calibration_file, pred_path,
                 if line_p[0] in VEHICLES and truncated < trunc_level:
                     color = 'green'
                     draw_3Dbox(ax, P2, line_p, color)
-                    car = draw_birdeyes(ax2, line_p, shape, line_gt=line_gt, color=color)
+                    car = draw_birdeyes(ax2, line_p, shape, color=color)
                     cars.append(car)
 
         # determine parking space
-        find_parking_space(cars, shape)
+        free_slot = find_parking_space(cars, shape)
+        draw_free_slots(ax2, free_slot)
 
         ax.imshow(image)
         ax.set_xticks([])  # remove axis value
@@ -232,6 +235,7 @@ def visualization(args, image_path, label_path, calibration_file, pred_path,
         for text in legend.get_texts():
             plt.setp(text, color='w')
 
+
         print(os.path.join(args.path, dataset[index]))
         # print(dataset[index])
         if args.save == False:
@@ -239,26 +243,6 @@ def visualization(args, image_path, label_path, calibration_file, pred_path,
         else:
             fig.savefig(os.path.join(args.path, dataset[index]), dpi=fig.dpi, bbox_inches='tight', pad_inches=0)
         # video_writer.write(np.uint8(fig))
-
-
-def find_parking_space(cars, shape):
-    # since we park only on the right hand side (in city)
-    # we search for a car that is closest to us and on the right side
-    shifted_cars = list()
-    for car in cars:
-        car[:, 0] -= shape // 2
-        if all([x > 0 for x in car[:, 0]]):
-            shifted_cars.append(car)
-    print(shifted_cars)
-
-
-def next_parking_slot(line, cars):
-    """
-    :param line: the tuple in format of ((x1, y1), (x2, y2)) that represents the distance from one car to another.
-    :param cars: the list of all cars except the one we are looking parking space from.
-    :return: tuple of two values. First value is Bool - True if next parking slot is available, False otherwise.
-    Second one is list - coordinates of the next car.
-    """
 
 
 def main(args):
@@ -287,9 +271,9 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--path', type=str, default='./result1', help='Output Image folder')
 
     parser.add_argument('-d', '-dir', type=str,
-                        default='/Users/danilginzburg/Desktop/myimages', help='File to predict')
-    parser.add_argument('-l', '-label', type=str)
-    parser.add_argument('-pred', '-prediction', type=str)
+                        default='/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving/kitti_dataset/2011_09_26/2011_09_26_drive_0084_sync/data', help='File to predict')
+    parser.add_argument('-l', '-label', default='/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving/kitti_dataset/2011_09_26/2011_09_26_drive_0084_sync/testlabel', type=str)
+    parser.add_argument('-pred', '-prediction', default='/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving/kitti_dataset/2011_09_26/2011_09_26_drive_0084_sync/data_results', type=str)
 
     args = parser.parse_args()
 
