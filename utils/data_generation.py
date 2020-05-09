@@ -1,7 +1,7 @@
 import copy
 import cv2
 import numpy as np
-from config import config as cfg
+from my_config import config as cfg
 
 def prepare_input_and_output(train_inst, image_dir):
     '''

@@ -80,7 +80,7 @@ def translation_constraints(P2, obj, rot_local):
 
 
 class detectionInfo(object):
-    def __init__(self, line):
+    def __init__(self, line, to_predict=False):
         self.name = line[0]
 
         self.truncation = float(line[1])
@@ -92,8 +92,12 @@ class detectionInfo(object):
         # in pixel coordinate
         self.xmin = float(line[4])
         self.ymin = float(line[5])
-        self.xmax = float(line[6])
-        self.ymax = float(line[7])
+        if to_predict:
+            self.xmax = float(line[6]) + self.xmin
+            self.ymax = float(line[7]) + self.ymin
+        else:
+            self.xmax = float(line[6])
+            self.ymax = float(line[7])
 
         # height, weigh, length in object coordinate, meter
         self.h = float(line[8])

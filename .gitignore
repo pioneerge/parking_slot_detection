@@ -3,3 +3,5 @@ kitti_dataset/
 result/
 .DS_Store
 .idea
+result1/
+visualized/

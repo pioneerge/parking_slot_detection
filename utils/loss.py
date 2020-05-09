@@ -8,7 +8,7 @@ def orientation_loss(y_true, y_pred):
     output: loss -- loss values for orientation
     """
 
-    # sin^2 + cons^2
+    # sin^2 + cos^2
     anchors = tf.reduce_sum(tf.square(y_true), axis=2)
     # check which bin valid
     anchors = tf.greater(anchors, tf.constant(0.5))
@@ -16,7 +16,7 @@ def orientation_loss(y_true, y_pred):
     anchors = tf.reduce_sum(tf.cast(anchors, tf.float32), 1)
 
     # cos(true)cos(estimate) + sin(true)sin(estimate)
-    loss = (y_true[:, : ,0] * y_pred[:, :, 0] + y_true[:, :, 1]*y_pred[:, :, 1])
+    loss = (y_true[:, : ,0] * y_pred[:, :, 0] + y_true[:, :, 1] * y_pred[:, :, 1])
     # the mean value in each bin
     loss = tf.reduce_sum(loss, axis=1) / anchors
     # sum the value at each bin

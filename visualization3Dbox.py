@@ -8,14 +8,18 @@ from matplotlib.path import Path
 from matplotlib.gridspec import GridSpec
 from PIL import Image
 
-from utils.read_dir import ReadDir
-from config import config as cfg
+# from utils.read_dir import ReadDir
+# from config import config as cfg
+# from .. import config
+from my_config import MyConfig as cfg
 from utils.correspondece_constraint import *
 
-car = ['car', 0.0, 0, 2.18, 318.0, 175.0, 484.0, 259.0, 1.6, 1.6, 3.78, -4.33, 2.62, 15.39, 3.9, 1.0]
+# car = ['car', 0.0, 0, 2.18, 318.0, 175.0, 484.0, 259.0, 1.6, 1.6, 3.78, -4.33, 2.62, 15.39, 3.9, 1.0]
+# cfg = config.Config
 
-# object - list of 4 points
+
 def compute_distance(object1, object2):
+    # object - list of 4 points
     distance = -1
     for point_obj1 in object1:
         for point_obj2 in object2:
@@ -65,42 +69,38 @@ def compute_birdviewbox(line, shape, scale):
 
     return np.vstack((corners_2D, corners_2D[0,:]))
 
-# def distance(car1, car2):
-#
 
-
-def draw_birdeyes(ax2, line_gt, line_p, shape):
-    # shape = 900
+def draw_birdeyes(ax2, line_p, shape, line_gt=None, color='green'):
     scale = 15
 
     pred_corners_2d = compute_birdviewbox(line_p, shape, scale)
-    gt_corners_2d = compute_birdviewbox(line_gt, shape, scale)
 
-    default_car = compute_birdviewbox(car, shape, scale)
-
-    # print(pred_corners_2d)
-
-
-    codes = [Path.LINETO] * gt_corners_2d.shape[0]
-    codes[0] = Path.MOVETO
-    codes[-1] = Path.CLOSEPOLY
-    pth = Path(gt_corners_2d, codes)
-    p = patches.PathPatch(pth, fill=False, color='orange', label='ground truth')
-    ax2.add_patch(p)
+    # default_car = compute_birdviewbox(car, shape, scale)
+    if line_gt is not None:
+        gt_corners_2d = compute_birdviewbox(line_gt, shape, scale)
+        codes = [Path.LINETO] * gt_corners_2d.shape[0]
+        codes[0] = Path.MOVETO
+        codes[-1] = Path.CLOSEPOLY
+        pth = Path(gt_corners_2d, codes)
+        p = patches.PathPatch(pth, fill=False, color='orange', label='ground truth')
+        ax2.add_patch(p)
 
     codes = [Path.LINETO] * pred_corners_2d.shape[0]
     codes[0] = Path.MOVETO
     codes[-1] = Path.CLOSEPOLY
     pth = Path(pred_corners_2d, codes)
-    p = patches.PathPatch(pth, fill=False, color='green', label='prediction')
+    p = patches.PathPatch(pth, fill=False, color=color, label='prediction')
     ax2.add_patch(p)
 
-    codes = [Path.LINETO] * default_car.shape[0]
-    codes[0] = Path.MOVETO
-    codes[-1] = Path.CLOSEPOLY
-    pth = Path(default_car, codes)
-    p = patches.PathPatch(pth, fill=False, color='blue', label='default car')
-    ax2.add_patch(p)
+    return pred_corners_2d
+
+    # codes = [Path.LINETO] * default_car.shape[0]
+    # codes[0] = Path.MOVETO
+    # codes[-1] = Path.CLOSEPOLY
+    # pth = Path(default_car, codes)
+    # p = patches.PathPatch(pth, fill=False, color='blue', label='default car')
+    # ax2.add_patch(p)
+
 
 def compute_3Dbox(P2, line):
     obj = detectionInfo(line)
@@ -163,20 +163,18 @@ def draw_3Dbox(ax, P2, line, color):
     ax.add_patch(front_fill)
 
 
-def visualization(args, image_path, label_path, calib_path, pred_path,
+def visualization(args, image_path, label_path, calibration_file, pred_path,
                   dataset, VEHICLES):
+    for line in open(calibration_file):
+        if 'P2' in line:
+            P2 = line.split(' ')
+            P2 = np.asarray([float(i) for i in P2[1:]])
+            P2 = np.reshape(P2, (3, 4))
 
-    for index in range(start_frame, end_frame):
+    for index in range(len(dataset)):
         image_file = os.path.join(image_path, dataset[index]+ '.png')
         label_file = os.path.join(label_path, dataset[index] + '.txt')
         prediction_file = os.path.join(pred_path, dataset[index]+ '.txt')
-        calibration_file = os.path.join(calib_path, dataset[index] + '.txt')
-        for line in open(calibration_file):
-            if 'P2' in line:
-                P2 = line.split(' ')
-                P2 = np.asarray([float(i) for i in P2[1:]])
-                P2 = np.reshape(P2, (3, 4))
-
 
         fig = plt.figure(figsize=(20.00, 5.12), dpi=100)
 
@@ -191,6 +189,7 @@ def visualization(args, image_path, label_path, calib_path, pred_path,
         image = Image.open(image_file).convert('RGB')
         shape = 900
         birdimage = np.zeros((shape, shape, 3), np.uint8)
+        cars = list()
 
         with open(label_file) as f1, open(prediction_file) as f2:
             for line_gt, line_p in zip(f1, f2):
@@ -201,19 +200,18 @@ def visualization(args, image_path, label_path, calib_path, pred_path,
                 occluded = np.abs(float(line_p[2]))
                 trunc_level = 1 if args.a == 'training' else 255
 
-            # truncated object in dataset is not observable
-                if line_p[0] in VEHICLES  and truncated < trunc_level:
+                # truncated object in dataset is not observable
+                if line_p[0] in VEHICLES and truncated < trunc_level:
                     color = 'green'
-                    if line_p[0] == 'Cyclist':
-                        color = 'yellow'
-                    elif line_p[0] == 'Pedestrian':
-                        color = 'cyan'
                     draw_3Dbox(ax, P2, line_p, color)
-                    draw_birdeyes(ax2, line_gt, line_p, shape)
+                    car = draw_birdeyes(ax2, line_p, shape, line_gt=line_gt, color=color)
+                    cars.append(car)
 
-        # visualize 3D bounding box
+        # determine parking space
+        find_parking_space(cars, shape)
+
         ax.imshow(image)
-        ax.set_xticks([]) #remove axis value
+        ax.set_xticks([])  # remove axis value
         ax.set_yticks([])
 
         # plot camera view range
@@ -234,6 +232,7 @@ def visualization(args, image_path, label_path, calib_path, pred_path,
         for text in legend.get_texts():
             plt.setp(text, color='w')
 
+        print(os.path.join(args.path, dataset[index]))
         # print(dataset[index])
         if args.save == False:
             plt.show()
@@ -242,16 +241,36 @@ def visualization(args, image_path, label_path, calib_path, pred_path,
         # video_writer.write(np.uint8(fig))
 
 
+def find_parking_space(cars, shape):
+    # since we park only on the right hand side (in city)
+    # we search for a car that is closest to us and on the right side
+    shifted_cars = list()
+    for car in cars:
+        car[:, 0] -= shape // 2
+        if all([x > 0 for x in car[:, 0]]):
+            shifted_cars.append(car)
+    print(shifted_cars)
+
+
+def next_parking_slot(line, cars):
+    """
+    :param line: the tuple in format of ((x1, y1), (x2, y2)) that represents the distance from one car to another.
+    :param cars: the list of all cars except the one we are looking parking space from.
+    :return: tuple of two values. First value is Bool - True if next parking slot is available, False otherwise.
+    Second one is list - coordinates of the next car.
+    """
+
+
 def main(args):
     base_dir = '/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving/kitti_dataset'
-    dir = ReadDir(base_dir=base_dir, subset=args.a,
-                  tracklet_date='2011_09_26', tracklet_file='2011_09_26_drive_0084_sync')
-    label_path = dir.label_dir
-    image_path = dir.image_dir
-    calib_path = dir.calib_dir
-    pred_path = dir.prediction_dir
+    # dir = ReadDir(base_dir=base_dir, subsetset=args.a,
+    #               tracklet_date='2011_09_26', tracklet_file='2011_09_26_drive_0084_sync')
+    label_path = args.l
+    image_path = args.d
+    calib_path = 'calib.txt'
+    pred_path = args.pred
 
-    dataset = [name.split('.')[0] for name in sorted(os.listdir(image_path))]
+    dataset = [name.split('.')[0] for name in sorted(os.listdir(image_path)) if not name.startswith('.')]
 
     VEHICLES = cfg().KITTI_cat
 
@@ -260,14 +279,18 @@ def main(args):
 
 
 if __name__ == '__main__':
-    start_frame = 0
-    end_frame = 1
 
     parser = argparse.ArgumentParser(description='Visualize 3D bounding box on images',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-a', '-dataset', type=str, default='tracklet', help='training dataset or tracklet')
     parser.add_argument('-s', '--save', type=bool, default=True, help='Save Figure or not')
-    parser.add_argument('-p', '--path', type=str, default='../result', help='Output Image folder')
+    parser.add_argument('-p', '--path', type=str, default='./result1', help='Output Image folder')
+
+    parser.add_argument('-d', '-dir', type=str,
+                        default='/Users/danilginzburg/Desktop/myimages', help='File to predict')
+    parser.add_argument('-l', '-label', type=str)
+    parser.add_argument('-pred', '-prediction', type=str)
+
     args = parser.parse_args()
 
     if not os.path.exists(args.path):

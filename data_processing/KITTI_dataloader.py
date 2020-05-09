@@ -1,7 +1,7 @@
 import os
 import csv
 import numpy as np
-from config import config as cfg
+from my_config import MyConfig as cfg
 
 class KITTILoader():
     def __init__(self, subset='training'):

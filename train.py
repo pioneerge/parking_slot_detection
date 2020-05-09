@@ -9,7 +9,7 @@ from data_processing.preprocessing import orientation_confidence_flip
 from utils.data_generation import data_gen
 from utils.loss import orientation_loss
 
-from config import config as cfg
+from my_config import config as cfg
 
 if cfg().network == 'vgg16':
     from model import vgg16 as nn

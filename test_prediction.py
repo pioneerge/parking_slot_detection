@@ -8,7 +8,7 @@ from utils.correspondece_constraint import *
 
 import time
 
-from config import config as cfg
+from my_config import config as cfg
 
 if cfg().network == 'vgg16':
     from model import vgg16 as nn
@@ -101,6 +101,7 @@ def predict(args):
     end_time = time.time()
     process_time = (end_time - start_time) / len(val_imgs)
     print(process_time)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Arguments for prediction',

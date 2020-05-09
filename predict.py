@@ -10,7 +10,7 @@ from data_processing.raw_data_processing import parse_raw_to_KITTI_form as to_ki
 
 import time
 
-from config import config as cfg
+from my_config import MyConfig as cfg
 
 if cfg().network == 'vgg16':
     from model import vgg16 as nn
@@ -18,7 +18,7 @@ if cfg().network == 'mobilenet_v2':
     from model import mobilenet_v2 as nn
 
 
-def predict(prediction_dir, label_dir, image_dir, calib_dir):
+def predict(prediction_dir, label_dir, image_dir, calibration_file):
     # complie models
     model = nn.network()
     model.load_weights('3dbox_weights_mob.hdf5')
@@ -27,24 +27,24 @@ def predict(prediction_dir, label_dir, image_dir, calib_dir):
     # KITTI_train_gen = KITTILoader(subset='training')
     dims_avg, _ = KITTILoader(subset='tracklet').get_average_dimension()
 
-    val_imgs = sorted(os.listdir(image_dir))
+    val_imgs = sorted([im for im in os.listdir(image_dir) if not im.startswith('.')])
+
+    P2 = np.array([])
+    for line in open(calibration_file):
+        if 'P2' in line:
+            P2 = line.split(' ')
+            P2 = np.asarray([float(i) for i in P2[1:]])
+            P2 = np.reshape(P2, (3, 4))
 
     for img in tqdm(val_imgs):
-        image_file = image_dir + img
-        label_file = label_dir + img.replace('png', 'txt')
-        prediction_file = prediction_dir + img.replace('png', 'txt')
-        calibration_file = calib_dir + img.replace('png', 'txt')
+        image_file = os.path.join(image_dir, img)
+        label_file = os.path.join(label_dir, img.replace('png', 'txt'))
+        prediction_file = os.path.join(prediction_dir, img.replace('png', 'txt'))
 
         # write the prediction file
         with open(prediction_file, 'w') as predict:
             img = cv2.imread(image_file)
             img = np.array(img, dtype='float32')
-            P2 = np.array([])
-            for line in open(calibration_file):
-                if 'P2' in line:
-                    P2 = line.split(' ')
-                    P2 = np.asarray([float(i) for i in P2[1:]])
-                    P2 = np.reshape(P2, (3,4))
 
             for line in open(label_file):
                 line = line.strip().split(' ')
@@ -54,12 +54,16 @@ def predict(prediction_dir, label_dir, image_dir, calib_dir):
                 ymin = int(obj.ymin)
                 ymax = int(obj.ymax)
                 if obj.name in cfg().KITTI_cat:
+
                     # cropped 2d bounding box
                     if xmin == xmax or ymin == ymax:
                         continue
                     # 2D detection area
                     patch = img[ymin : ymax, xmin : xmax]
-                    patch = cv2.resize(patch, (cfg().norm_h, cfg().norm_w))
+                    try:
+                        patch = cv2.resize(patch, (cfg().norm_h, cfg().norm_w))
+                    except cv2.error:
+                        continue
                     # patch -= np.array([[[103.939, 116.779, 123.68]]])
                     patch /= 255.0
                     # extend it to match the training dimension
@@ -97,24 +101,25 @@ if __name__ == '__main__':
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-d', '-dir', type=str,
                         default='/Users/danilginzburg/Desktop/myimages', help='File to predict')
+    parser.add_argument('-l', '-label', type=str)
     args = parser.parse_args()
 
     prediction_dir = args.d + '_results'
     if not os.path.exists(prediction_dir):
         os.mkdir(prediction_dir)
-    label_dir = os.path.join(prediction_dir, '__labels')
+
+    label_dir = args.l
     image_dir = args.d
     tracklet = 'kitti_dataset/2011_09_26/2011_09_26_drive_0084_sync'
-    calib_dir = os.path.join(prediction_dir, '__calib')
+    calib_file = 'calib.txt'
 
     # create label and calib files
-    to_kitti.makedir(label_dir)
-    to_kitti.makedir(calib_dir)
+    # to_kitti.makedir(label_dir)
 
-    transform, line_P2, P2 = to_kitti.read_transformation_matrix(tracklet)
+    # transform, line_P2, P2 = to_kitti.read_transformation_matrix(tracklet)
 
-    to_kitti.write_label(tracklet, label_dir, image_dir, transform, P2)
-    to_kitti.write_calib(calib_dir, image_dir, line_P2)
+    # to_kitti.write_label(tracklet, label_dir, image_dir, transform, P2)
+    # to_kitti.write_calib(calib_dir, image_dir, line_P2)
 
     # make predictions
-    predict(prediction_dir, label_dir, image_dir, calib_dir)
+    predict(prediction_dir, label_dir, image_dir, calib_file)

@@ -1,5 +1,5 @@
-import os
-class config():
+
+class MyConfig:
     def __init__(self):
         # Todo: set base_dir to kitti/image_2
         self.base_dir = '/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving/kitti_dataset'

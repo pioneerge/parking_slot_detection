@@ -7,7 +7,7 @@ import tensorflow as tf
 layers = tf.keras.layers
 K = tf.keras.backend
 
-from config import config as cfg
+from my_config import config as cfg
 
 def l2_normalize(x):
     return tf.nn.l2_normalize(x, axis=2)

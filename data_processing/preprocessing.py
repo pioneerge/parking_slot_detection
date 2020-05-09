@@ -3,7 +3,7 @@ from compute anchors to data_gen
 
 '''
 import numpy as np
-from config import config as cfg
+from my_config import config as cfg
 
 def compute_anchors(angle):
     """
