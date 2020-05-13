@@ -13,9 +13,6 @@ from my_config import MyConfig as cfg
 from utils.correspondece_constraint import *
 from parking_space import find_parking_space
 
-# car = ['car', 0.0, 0, 2.18, 318.0, 175.0, 484.0, 259.0, 1.6, 1.6, 3.78, -4.33, 2.62, 15.39, 3.9, 1.0]
-# cfg = config.Config
-
 
 def compute_distance(object1, object2):
     # object - list of 4 points
@@ -102,10 +99,10 @@ def draw_free_slots(ax2, free_slots, color='orange'):
 def compute_3Dbox(P2, line):
     obj = detectionInfo(line)
     # Draw 2D Bounding Box
-    xmin = int(obj.xmin)
-    xmax = int(obj.xmax)
-    ymin = int(obj.ymin)
-    ymax = int(obj.ymax)
+    # xmin = int(obj.xmin)
+    # xmax = int(obj.xmax)
+    # ymin = int(obj.ymin)
+    # ymax = int(obj.ymax)
     # width = xmax - xmin
     # height = ymax - ymin
     # box_2d = patches.Rectangle((xmin, ymin), width, height, fill=False, color='red', linewidth='3')

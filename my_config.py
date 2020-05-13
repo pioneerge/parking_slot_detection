@@ -2,6 +2,7 @@ import os
 
 
 class MyConfig:
+
     # set the path to the base directory
     base_dir = '/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving'
 
