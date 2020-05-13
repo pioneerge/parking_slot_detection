@@ -9,6 +9,8 @@ This project implements paper "*3D Bounding Box Estimation Using Deep Learning a
  - Output of ```predict.py``` is a file containing the information of location of a car in 3d space (orientation, translation, etc.)
  - To visualize and check the result, run ```visualization3Dbox``` (check **"Code Execution"** section for more info)
  - ```./utils``` is a folder containing auxiliary files, necessary for running different parts of the project.
+ - ```./model``` is a folder containing different models that can be used.
+ 
 
 ## Weights
  - You can find pretraned model [here](https://www.kaggle.com/thedownhill/3d-box-cars-detection).
