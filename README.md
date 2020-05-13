@@ -2,24 +2,11 @@
 This project fully implemented paper "*3D Bounding Box Estimation Using Deep Learning and Geometry*" based on previous work by
 image-to-3d-bbox(https://github.com/experiencor/image-to-3d-bbox).
 
-## Depandency:
+## Requirements:
 - Python 3.6
-- Tensorflow 1.12.0
-
-## Modifications and Improvements:
-1. No prior knowledge of the object location is needed. Instead of reducing configuration numbers to 64, the location of 
-each object is solved analytically based on local orientation and 2D location.
-
-2. Add soft constraints to improve the stability of 3D bounding box at certain locations.
-
-3. MobileNetV2 backend is used to significantly reduce parameter numbers and make the model 
-Fully Convolutional.
-
-4. The orientation loss is changed to the correct form.
-
-5. Bird-eye view visualization is added.
-
-
+  - pip 20.0.2
+  - Install the dependencies:
+  - ```pip -r isntall requirements.txt```
 
 ## Results on KITTI raw data: 
 MobilenetV2 with ground truth 2D bounding box. 
@@ -50,6 +37,8 @@ kitti_dateset/
 
 ```
 
+## Running the code
+### Training
 To train:
 1. Specify parameters in `config.py`.
 2. run `train.py` to train the model:
@@ -57,12 +46,14 @@ To train:
 python3 train.py
 ```
 
+### Prediction
 To predict:
 1. Change dir in `read_dir.py` to your prediction folder.
 2. run `prediction.py` to predict 3D bounding boxes. Change `-d` to your dataset directory, 
 `-a` to specify which type of dataset(train/val split or raw), `-w` to specify the training
 weights. 
 
+### Visualization
 To visualize 3D bounding box:
 1. run `visualization3Dbox.py`. Specify `-s` to if save figures or 
 view the plot , specify `-p` to your output image folders. 
