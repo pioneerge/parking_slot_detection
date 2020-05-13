@@ -15,7 +15,8 @@ MobilenetV2 with ground truth 2D bounding box.
 Video: https://www.youtube.com/watch?v=IIReDnbLQAE
 
 
-## Train and Evaluate:
+## Code Execution
+### Dataset Preparation
 First prepare your KITTI dataset in the following format:
 ```plain
 kitti_dateset/
@@ -37,7 +38,6 @@ kitti_dateset/
 
 ```
 
-## Running the code
 ### Training
 To train:
 1. Specify parameters in `config.py`.
@@ -48,7 +48,7 @@ python3 train.py
 
 ### Prediction
 To predict:
-1. Change dir in `read_dir.py` to your prediction folder.
+1. Change tracklet date and tracklet file names in ```./utils/read_dir.py``` according to your dataset (if you use kitti).
 2. run `prediction.py` to predict 3D bounding boxes. Change `-d` to your dataset directory, 
 `-a` to specify which type of dataset(train/val split or raw), `-w` to specify the training
 weights. 
