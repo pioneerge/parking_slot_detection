@@ -15,8 +15,8 @@ This project implements paper "*3D Bounding Box Estimation Using Deep Learning a
 
 ## Requirements:
 - Python 3.6
-  - pip 20.0.2
-  - Install the dependencies:
+- ```pip 20.0.2```
+- Install the dependencies:
   - ```pip -r isntall ./requirements.txt```
 
 
