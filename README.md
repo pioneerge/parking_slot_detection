@@ -21,8 +21,8 @@ This project implements paper "*3D Bounding Box Estimation Using Deep Learning a
 
 
 ## Results on KITTI raw data: 
-MobilenetV2 with ground truth 2D bounding box. 
-![347.png](result/0000000347.png)
+VGG16 with ground truth 2D bounding box.
+![2.png](result/2.png)
 
 Video: https://www.youtube.com/watch?v=IIReDnbLQAE
 
