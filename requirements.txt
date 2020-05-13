@@ -1,0 +1,8 @@
+Shapely==1.7.0
+opencv_python==4.1.0.25
+matplotlib==2.1.2
+descartes==1.1.0
+tqdm==4.23.3
+tensorflow==1.7.0
+numpy==1.14.2
+Pillow==7.1.2
