@@ -1,21 +1,36 @@
-# 3D Bounding Box Estimation for Autonomous Drinving
-This project fully implemented paper "*3D Bounding Box Estimation Using Deep Learning and Geometry*" based on previous work by
-image-to-3d-bbox(https://github.com/experiencor/image-to-3d-bbox).
+# Autonomous Parking Slot Detection System
+## Goal
+Locate a free space on the side of the road that is available for parking the specified car.  
+
+This project implements paper "*3D Bounding Box Estimation Using Deep Learning and Geometry*" for predicting 3d location of a car based on 2d bounding box. (credit: https://github.com/lzccccc/3d-bounding-box-estimation-for-autonomous-driving)
+
+
+## Structure
+ - Output of ```predict.py``` is a file containing the information of location of a car in 3d space (orientation, translation, etc.)
+ - To visualize and check the result, run ```visualization3Dbox``` (check **"Code Execution"** section for more info)
+ - ```./utils``` is a folder containing auxiliary files, necessary for running different parts of the project.
+ - ```./model``` is a folder containing different models that can be used.
+ 
+
+## Weights
+ - You can find pretraned model [here](https://www.kaggle.com/thedownhill/3d-box-cars-detection).
 
 ## Requirements:
 - Python 3.6
-  - pip 20.0.2
-  - Install the dependencies:
-  - ```pip -r isntall requirements.txt```
+- ```pip 20.0.2```
+- Install the dependencies:
+  - ```pip -r isntall ./requirements.txt```
+
 
 ## Results on KITTI raw data: 
-MobilenetV2 with ground truth 2D bounding box. 
-![347.png](result/0000000347.png)
+VGG16 with ground truth 2D bounding box.
+![2.png](result/2.png)
 
 Video: https://www.youtube.com/watch?v=IIReDnbLQAE
 
 
-## Train and Evaluate:
+## Code Execution
+### Dataset Preparation
 First prepare your KITTI dataset in the following format:
 ```plain
 kitti_dateset/
@@ -37,7 +52,6 @@ kitti_dateset/
 
 ```
 
-## Running the code
 ### Training
 To train:
 1. Specify parameters in `config.py`.
@@ -48,7 +62,7 @@ python3 train.py
 
 ### Prediction
 To predict:
-1. Change dir in `read_dir.py` to your prediction folder.
+1. Change tracklet date and tracklet file names in ```./utils/read_dir.py``` according to your dataset (if you use kitti).
 2. run `prediction.py` to predict 3D bounding boxes. Change `-d` to your dataset directory, 
 `-a` to specify which type of dataset(train/val split or raw), `-w` to specify the training
 weights. 
