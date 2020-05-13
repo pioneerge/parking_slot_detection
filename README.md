@@ -17,7 +17,7 @@ This project implements paper "*3D Bounding Box Estimation Using Deep Learning a
 - Python 3.6
   - pip 20.0.2
   - Install the dependencies:
-  - ```pip -r isntall requirements.txt```
+  - ```pip -r isntall ./requirements.txt```
 
 
 ## Results on KITTI raw data: 
