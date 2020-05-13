@@ -1,10 +1,11 @@
 
 class MyConfig:
     def __init__(self):
-        # Todo: set base_dir to kitti/image_2
+        # Dataset directory
+        # Default: "./kitti_dataset"
         self.base_dir = '/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving/kitti_dataset'
 
-        # Todo: set the base network: vgg16, vgg16_conv or mobilenet_v2
+        # Network: vgg16, vgg16_conv or mobilenet_v2
         self.network = 'vgg16'
 
         # set the bin size
@@ -27,5 +28,4 @@ class MyConfig:
         self.batch_size = 8
 
         # set the categories
-        # self.KITTI_cat = ['Car', 'Cyclist', 'Pedestrian']
-        self.KITTI_cat = ['Car']
+        self.KITTI_cat = ['Car']  # ['Car', 'Cyclist', 'Pedestrian']

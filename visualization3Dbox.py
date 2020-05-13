@@ -15,9 +15,6 @@ from my_config import MyConfig as cfg
 from utils.correspondece_constraint import *
 from parking_space import find_parking_space
 
-# car = ['car', 0.0, 0, 2.18, 318.0, 175.0, 484.0, 259.0, 1.6, 1.6, 3.78, -4.33, 2.62, 15.39, 3.9, 1.0]
-# cfg = config.Config
-
 
 def compute_distance(object1, object2):
     # object - list of 4 points
@@ -51,12 +48,8 @@ def compute_birdviewbox(line, shape, scale):
     x_corners += -w / 2
     z_corners += -l / 2
 
-    # print(x_corners, "------------" ,z_corners)
-
     # bounding box in object coordinate
     corners_2D = np.array([x_corners, z_corners])
-
-    # print("\n", corners_2D)
 
     # rotate
     corners_2D = R.dot(corners_2D)
@@ -108,10 +101,10 @@ def draw_free_slots(ax2, free_slots, color='orange'):
 def compute_3Dbox(P2, line):
     obj = detectionInfo(line)
     # Draw 2D Bounding Box
-    xmin = int(obj.xmin)
-    xmax = int(obj.xmax)
-    ymin = int(obj.ymin)
-    ymax = int(obj.ymax)
+    # xmin = int(obj.xmin)
+    # xmax = int(obj.xmax)
+    # ymin = int(obj.ymin)
+    # ymax = int(obj.ymax)
     # width = xmax - xmin
     # height = ymax - ymin
     # box_2d = patches.Rectangle((xmin, ymin), width, height, fill=False, color='red', linewidth='3')
@@ -232,12 +225,12 @@ def visualization(args, image_path, label_path, calibration_file, pred_path,
         ax2.set_yticks([])
         # add legend
         handles, labels = ax2.get_legend_handles_labels()
-        print("Handles:  ", handles[-1])
-        print("Labels:  ", labels[-1])
+        # print("Handles:  ", handles[-1])
+        # print("Labels:  ", labels[-1])
         legend = ax2.legend([handles[0], handles[-1]], [labels[0], labels[-1]], loc='lower right',
                             fontsize='x-small', framealpha=0.2)
         for text in legend.get_texts():
-            print("TEXT:   ", text)
+            # print("TEXT:   ", text)
             plt.setp(text, color='w')
 
 
@@ -256,11 +249,11 @@ def main(args):
     #               tracklet_date='2011_09_26', tracklet_file='2011_09_26_drive_0084_sync')
     label_path = args.l
     image_path = args.d
+    # TODO change calib path to argument or "./calib.txt"
     calib_path = '/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving/calib.txt'
     pred_path = args.pred
 
     dataset = [name.split('.')[0] for name in sorted(os.listdir(image_path)) if not name.startswith('.')]
-
     VEHICLES = cfg().KITTI_cat
 
     visualization(args, image_path, label_path, calib_path, pred_path,

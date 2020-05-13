@@ -8,7 +8,7 @@ from utils.correspondece_constraint import *
 
 import time
 
-from my_config import config as cfg
+from my_config import MyConfig as cfg
 
 if cfg().network == 'vgg16':
     from model import vgg16 as nn

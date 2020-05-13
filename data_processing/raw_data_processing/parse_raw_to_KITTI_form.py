@@ -12,6 +12,7 @@ from xml.etree.ElementTree import ElementTree
 import numpy as np
 from warnings import warn
 import itertools
+from my_config import MyConfig as cfg
 
 STATE_UNSET = 0
 STATE_INTERP = 1
@@ -404,7 +405,7 @@ def write_calib(calib_path, image_path, line_P2):
 
 
 if __name__ == '__main__':
-    base_dir = '/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving/kitti_dataset'
+    base_dir = cfg().base_dir
     dir = ReadDir(base_dir=base_dir, subset='tracklet', tracklet_date='2011_09_26',
                   tracklet_file='2011_09_26_drive_0084_sync')
     tracklet_path = dir.tracklet_drive
