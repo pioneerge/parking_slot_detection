@@ -95,13 +95,14 @@ def draw_birdeyes(ax2, line_p, shape, line_gt=None, color='green'):
     return pred_corners_2d
 
 
-def draw_free_slots(ax, free_slot, color='orange'):
-    codes = [Path.LINETO] * free_slot.shape[0]
-    codes[0] = Path.MOVETO
-    codes[-1] = Path.CLOSEPOLY
-    pth = Path(free_slot, codes)
-    p = patches.PathPatch(pth, fill=True, color=color, label='free space')
-    ax.add_patch(p)
+def draw_free_slots(ax2, free_slots, color='orange'):
+    for free_slot in free_slots:
+        codes = [Path.LINETO] * free_slot.shape[0]
+        codes[0] = Path.MOVETO
+        codes[-1] = Path.CLOSEPOLY
+        pth = Path(free_slot, codes)
+        p = patches.PathPatch(pth, fill=False, color=color, label='free space')
+        ax2.add_patch(p)
 
 
 def compute_3Dbox(P2, line):
@@ -210,8 +211,9 @@ def visualization(args, image_path, label_path, calibration_file, pred_path,
                     cars.append(car)
 
         # determine parking space
-        free_slot = find_parking_space(cars, shape)
-        draw_free_slots(ax2, free_slot)
+        free_slots = find_parking_space(cars, shape)
+        print(free_slots)
+        draw_free_slots(ax2, free_slots)
 
         ax.imshow(image)
         ax.set_xticks([])  # remove axis value
@@ -230,9 +232,12 @@ def visualization(args, image_path, label_path, calibration_file, pred_path,
         ax2.set_yticks([])
         # add legend
         handles, labels = ax2.get_legend_handles_labels()
-        legend = ax2.legend([handles[0], handles[1]], [labels[0], labels[1]], loc='lower right',
+        print("Handles:  ", handles[-1])
+        print("Labels:  ", labels[-1])
+        legend = ax2.legend([handles[0], handles[-1]], [labels[0], labels[-1]], loc='lower right',
                             fontsize='x-small', framealpha=0.2)
         for text in legend.get_texts():
+            print("TEXT:   ", text)
             plt.setp(text, color='w')
 
 
@@ -251,7 +256,7 @@ def main(args):
     #               tracklet_date='2011_09_26', tracklet_file='2011_09_26_drive_0084_sync')
     label_path = args.l
     image_path = args.d
-    calib_path = 'calib.txt'
+    calib_path = '/Users/danilginzburg/Projects/Project[S20]/3d-bounding-box-estimation-for-autonomous-driving/calib.txt'
     pred_path = args.pred
 
     dataset = [name.split('.')[0] for name in sorted(os.listdir(image_path)) if not name.startswith('.')]
