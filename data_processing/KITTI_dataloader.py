@@ -3,16 +3,17 @@ import csv
 import numpy as np
 from my_config import MyConfig as cfg
 
-class KITTILoader():
+
+class KITTILoader:
     def __init__(self, subset='training'):
         super(KITTILoader, self).__init__()
 
-        self.base_dir = cfg().base_dir
-        self.KITTI_cat = cfg().KITTI_cat
+        self.base_dir = cfg.base_dir
+        self.KITTI_cat = cfg.KITTI_cat
 
         if subset == 'tracklet':
-            label_dir = os.path.join(self.base_dir, '2011_09_26/2011_09_26_drive_0084_sync', 'label_02')
-            image_dir = os.path.join(self.base_dir, '2011_09_26/2011_09_26_drive_0084_sync', 'image_02')
+            label_dir = cfg.labels
+            image_dir = cfg.image_path
         else:
             label_dir = os.path.join(self.base_dir, subset, 'label_2')
             image_dir = os.path.join(self.base_dir, subset, 'image_2')
@@ -50,7 +51,6 @@ class KITTILoader():
                                           'xmax': int(float(row['xmax'])), 'ymax': int(float(row['ymax'])),
                                           'dims': dimensions, 'trans': translations, 'rot_y': float(row['ry'])}
 
-
                         self.image_data.append(annotation)
 
     def get_average_dimension(self):
@@ -66,6 +66,7 @@ class KITTILoader():
                 dims_avg[current_data['name']] /= dims_cnt[current_data['name']]
         return dims_avg, dims_cnt
 
+
 def get_new_alpha(alpha):
     """
     change the range of orientation from [-pi, pi] to [0, 2pi]
@@ -80,12 +81,3 @@ def get_new_alpha(alpha):
 
     return new_alpha
 
-if __name__ == '__main__':
-    base_dir = '/home/user/Deep3DBOX_Keras_Modified/kitti_test'
-    KITTI_gen = KITTILoader(subset='tracklet')
-    dim_avg, dim_cnt = KITTI_gen.get_average_dimension()
-    print(dim_avg, dim_cnt)
-
-    # input = 180 * np.pi / 180
-    # a = KITTILoader.get_new_alpha(input)
-    # print(a * 180 / np.pi)

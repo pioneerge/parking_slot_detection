@@ -2,19 +2,17 @@ import os
 import numpy as np
 import cv2
 import argparse
-from tqdm import tqdm
-from utils.read_dir import ReadDir
-from data_processing.KITTI_dataloader import KITTILoader
-from utils.correspondece_constraint import *
-from data_processing.raw_data_processing import parse_raw_to_KITTI_form as to_kitti
-
 import time
 
+from tqdm import tqdm
+from data_processing.KITTI_dataloader import KITTILoader
+from utils.correspondece_constraint import *
 from my_config import MyConfig as cfg
 
-if cfg().network == 'vgg16':
+
+if cfg.network == 'vgg16':
     from model import vgg16 as nn
-if cfg().network == 'mobilenet_v2':
+if cfg.network == 'mobilenet_v2':
     from model import mobilenet_v2 as nn
 
 
@@ -53,7 +51,7 @@ def predict(prediction_dir, label_dir, image_dir, calibration_file):
                 xmax = int(obj.xmax)
                 ymin = int(obj.ymin)
                 ymax = int(obj.ymax)
-                if obj.name in cfg().KITTI_cat:
+                if obj.name in cfg.KITTI_cat:
 
                     # cropped 2d bounding box
                     if xmin == xmax or ymin == ymax:
@@ -61,7 +59,7 @@ def predict(prediction_dir, label_dir, image_dir, calibration_file):
                     # 2D detection area
                     patch = img[ymin : ymax, xmin : xmax]
                     try:
-                        patch = cv2.resize(patch, (cfg().norm_h, cfg().norm_w))
+                        patch = cv2.resize(patch, (cfg.norm_h, cfg.norm_w))
                     except cv2.error:
                         continue
                     # patch -= np.array([[[103.939, 116.779, 123.68]]])
@@ -80,7 +78,7 @@ def predict(prediction_dir, label_dir, image_dir, calibration_file):
                     obj.h, obj.w, obj.l = np.array([round(dim, 2) for dim in dims])
 
                     # update with predicted alpha, [-pi, pi]
-                    obj.alpha = recover_angle(bin_anchor, bin_confidence, cfg().bin)
+                    obj.alpha = recover_angle(bin_anchor, bin_confidence, cfg.bin)
 
                     # compute global and local orientation
                     obj.rot_global, rot_local = compute_orientaion(P2, obj)
@@ -97,29 +95,14 @@ def predict(prediction_dir, label_dir, image_dir, calibration_file):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Arguments for prediction',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-d', '-dir', type=str,
-                        default='/Users/danilginzburg/Desktop/myimages', help='File to predict')
-    parser.add_argument('-l', '-label', type=str)
-    args = parser.parse_args()
 
-    prediction_dir = args.d + '_results'
+    prediction_dir = cfg.labels3d
     if not os.path.exists(prediction_dir):
         os.mkdir(prediction_dir)
 
-    label_dir = args.l
-    image_dir = args.d
-    tracklet = 'kitti_dataset/2011_09_26/2011_09_26_drive_0084_sync'
-    calib_file = 'calib.txt'
-
-    # create label and calib files
-    # to_kitti.makedir(label_dir)
-
-    # transform, line_P2, P2 = to_kitti.read_transformation_matrix(tracklet)
-
-    # to_kitti.write_label(tracklet, label_dir, image_dir, transform, P2)
-    # to_kitti.write_calib(calib_dir, image_dir, line_P2)
+    label_dir = cfg.labels
+    image_dir = cfg.image_path
+    calib_file = cfg.calib
 
     # make predictions
     predict(prediction_dir, label_dir, image_dir, calib_file)

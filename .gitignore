@@ -3,4 +3,7 @@ kitti_dataset/
 .DS_Store
 .idea
 result1/
-visualized/
+tracklet/
+2d_labels/
+3d_labels/
+results/

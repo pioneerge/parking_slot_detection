@@ -19,7 +19,6 @@ def point_in_rectangle(point, rectangle):
     dotABAB = np.dot(AB, AB)
     dotBCBM = np.dot(BC, BM)
     dotBCBC = np.dot(BC, BC)
-    print(dotABAM, dotABAB, " -- ", dotBCBM, dotBCBC)
     return 0 <= dotABAM <= dotABAB and 0 <= dotBCBM <= dotBCBC
 
 
@@ -80,7 +79,6 @@ def find_parking_space(cars, shape):
         car[:, 0] -= shape // 2
         if all([x > 0 for x in car[:, 0]]):
             shifted_cars.append(car)
-    # print('all cars', shifted_cars)
     min_y = 10000
     start_car = None
     for shifted_car in shifted_cars:
@@ -88,7 +86,6 @@ def find_parking_space(cars, shape):
         if shifted_car[:, 1].min() < min_y:
             min_y = shifted_car[:, 1].max()
             start_car = shifted_car
-    # print('car we start from == ', start_car)
 
     while True:
         y = start_car[:, 1].max()
@@ -96,10 +93,7 @@ def find_parking_space(cars, shape):
             break
         x = start_car[:-1, 0].sum() / 4
         vector = [[x, y], [x, y + height * space_bw_cars_ratio]]
-        # print('start car', start_car)
-        # print('input -------', vector, [x for x in shifted_cars if not np.array_equal(x, start_car)], '------')
         is_slot_free, start_car = vector_intersection(vector, [x for x in shifted_cars if not np.array_equal(x, start_car)], draw=False)
-        # print(is_slot_free, start_car)
         if is_slot_free:
             start_car[:, 0] += shape // 2
             free_slots.append(start_car)
