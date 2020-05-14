@@ -36,6 +36,12 @@ Create folder in root of project: `./tracklet`. And place `tracklet_labels.xml`,
 
 *You can also change the path of tracklet directory in `my_config.py`*
 
+### Before script
+Before predcting run `./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py` to convert tracklet_labels to 2d boxes of objects + convert camera calibiration files into `calb.txt`
+```bash
+python3 ./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py
+```
+
 ### Training
 To train:
 1. Specify parameters in `config.py`.
