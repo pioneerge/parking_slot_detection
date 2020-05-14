@@ -31,14 +31,11 @@ Video: https://www.youtube.com/watch?v=IIReDnbLQAE
 
 ## Code Execution
 ### Dataset Preparation
- - **Train**
+ * **Train**
    - Dataset can be found here: [Left color images](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d). You also need calibration files + training labels.
- - **Predict**
+ * **Predict**
    - Dataset can be found here: [2011_09_26_drive_0035 (0.5 GB)](http://www.cvlibs.net/datasets/kitti/raw_data.php?type=residential) (or other datasets). You need synced data + calibration files + tracklets.
-
-
-First prepare your KITTI dataset in the following format:
-Create folder in root of project: `./tracklet`. And place `tracklet_labels.xml`, `calib_velo_to_cam.txt` and `calib_cam_to_cam.txt` from kitti dataset there.
+   - First prepare your KITTI dataset in the following format: create folder in root of project: `./tracklet`. Place `tracklet_labels.xml`, `calib_velo_to_cam.txt` and `calib_cam_to_cam.txt` from kitti dataset there.
 
 *You can also change the path of tracklet directory in `my_config.py`*
 
