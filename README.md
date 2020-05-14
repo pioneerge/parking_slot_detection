@@ -81,24 +81,21 @@ python3 ./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py
 
 ### Training
 To train:
-1. Specify parameters in `my_config.py`.
-2. run `train.py` to train the model:
+Run `train.py` to train the model:
 ```bash
 python3 train.py
 ```
 
 ### Prediction
 To predict follow the steps from **Before script** and then:
-1. Specify parameters in `my_config.py`.
-2. run `prediction.py` to predict 3D bounding boxes. (predictions for each image are written to folder specified in `my_config.py`)
+Run `prediction.py` to predict 3D bounding boxes. (predictions for each image are written to folder specified in `my_config.py`)
 ```bash 
 python3 prediction.py
 ```
 
 ### Visualization
 To visualize 3D bounding boxes from predicted files:
-1. Specify parameters in `my_config.py`.
-2. Run `visualization3Dbox.py`. Specify `-s` to save image or view plot (save by default).
+Run `visualization3Dbox.py`. Specify `-s` to save image or view plot (save by default).
 ```bash
 python3 visualization3Dbox.py
 ```
