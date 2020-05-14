@@ -35,11 +35,12 @@ Video: https://www.youtube.com/watch?v=IIReDnbLQAE
    - Dataset can be found here: [Left color images](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d). You also need calibration files + training labels.
  * **Predict**
    - Dataset can be found here: [2011_09_26_drive_0035 (0.5 GB)](http://www.cvlibs.net/datasets/kitti/raw_data.php?type=residential) (or other datasets). You need synced data + calibration files + tracklets.
-   - First prepare your KITTI dataset in the following format: create folder in root of project: `./tracklet`. Place `tracklet_labels.xml`, `calib_velo_to_cam.txt` and `calib_cam_to_cam.txt` from kitti dataset there.
-
-*You can also change the path of tracklet directory in `my_config.py`*
+   
 
 ### Before script
+#### Config
+Configure root directory path, weights' path and images' path in `my_config.py`.
+
 #### For train
 First prepare your KITTI dataset in the following format:
 ```
@@ -63,7 +64,16 @@ kitti_dateset/
 
 
 #### For predict
-Before predcting run `./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py` to convert tracklet_labels to 2d boxes of objects + convert camera calibration files into `calb.txt`
+Prepare the dataset and place calibration files in root directory in following format:
+```
+tracklet/
+├── calib_cam_to_cam.txt
+├── calib_velo_to_cam.txt
+└── tracklet_labels.xml
+```
+*You can also change the path of tracklet directory in `my_config.py`*
+
+Before predcting run `./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py` to convert tracklet_labels to 2d boxes of objects + convert camera calibration files into `calib.txt`
 ```bash
 python3 ./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py
 ```
@@ -71,7 +81,7 @@ python3 ./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py
 
 ### Training
 To train:
-1. Specify parameters in `config.py`.
+1. Specify parameters in `my_config.py`.
 2. run `train.py` to train the model:
 ```bash
 python3 train.py
@@ -79,15 +89,15 @@ python3 train.py
 
 ### Prediction
 To predict follow the steps from **Before script** and then:
-1. Specify parameters in `config.py`.
-2. run `prediction.py` to predict 3D bounding boxes. (predictions for each image are written to folder specified in `my_config`)
+1. Specify parameters in `my_config.py`.
+2. run `prediction.py` to predict 3D bounding boxes. (predictions for each image are written to folder specified in `my_config.py`)
 ```bash 
 python3 prediction.py
 ```
 
 ### Visualization
 To visualize 3D bounding boxes from predicted files:
-1. Specify parameters in `config.py`.
+1. Specify parameters in `my_config.py`.
 2. Run `visualization3Dbox.py`. Specify `-s` to save image or view plot (save by default).
 ```bash
 python3 visualization3Dbox.py
