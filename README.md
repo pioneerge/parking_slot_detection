@@ -31,16 +31,46 @@ Video: https://www.youtube.com/watch?v=IIReDnbLQAE
 
 ## Code Execution
 ### Dataset Preparation
+ - **Train**
+   - Dataset can be found here: [Left color images](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d). You also need calibration files + training labels.
+ - **Predict**
+   - Dataset can be found here: [2011_09_26_drive_0035 (0.5 GB)](http://www.cvlibs.net/datasets/kitti/raw_data.php?type=residential) (or other datasets). You need synced data + calibration files + tracklets.
+
+
 First prepare your KITTI dataset in the following format:
 Create folder in root of project: `./tracklet`. And place `tracklet_labels.xml`, `calib_velo_to_cam.txt` and `calib_cam_to_cam.txt` from kitti dataset there.
 
 *You can also change the path of tracklet directory in `my_config.py`*
 
 ### Before script
-Before predcting run `./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py` to convert tracklet_labels to 2d boxes of objects + convert camera calibiration files into `calb.txt`
+#### For train
+First prepare your KITTI dataset in the following format:
+```
+kitti_dateset/
+├── 2011_09_26
+│   └── 2011_09_26_drive_0084_sync
+│           ├── box_3d       <- predicted data
+│           ├── calib_02
+│           ├── calib_cam_to_cam.txt
+│           ├── calib_velo_to_cam.txt
+│           ├── image_02
+│           ├── label_02
+│           └── tracklet_labels.xml
+│
+└── training
+    ├── box_3d    <- predicted data
+    ├── calib
+    ├── image_2
+    └── label_2
+```
+
+
+#### For predict
+Before predcting run `./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py` to convert tracklet_labels to 2d boxes of objects + convert camera calibration files into `calb.txt`
 ```bash
 python3 ./data_processing/raw_data_processing/parse_raw_to_KITTI_form.py
 ```
+
 
 ### Training
 To train:
@@ -51,7 +81,7 @@ python3 train.py
 ```
 
 ### Prediction
-To predict:
+To predict follow the steps from **Before script** and then:
 1. Specify parameters in `config.py`.
 2. run `prediction.py` to predict 3D bounding boxes. (predictions for each image are written to folder specified in `my_config`)
 ```bash 
