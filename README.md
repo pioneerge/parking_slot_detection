@@ -32,25 +32,9 @@ Video: https://www.youtube.com/watch?v=IIReDnbLQAE
 ## Code Execution
 ### Dataset Preparation
 First prepare your KITTI dataset in the following format:
-```plain
-kitti_dateset/
-├── 2011_09_26
-│   └── 2011_09_26_drive_0084_sync
-│           ├── box_3d       <- predicted data
-│           ├── calib_02
-│           ├── calib_cam_to_cam.txt
-│           ├── calib_velo_to_cam.txt
-│           ├── image_02
-│           ├── label_02
-│           └── tracklet_labels.xml
-│
-└── training
-    ├── box_3d    <- predicted data
-    ├── calib
-    ├── image_2
-    └── label_2
+Create folder in root of project: `./tracklet`. And place `tracklet_labels.xml`, `calib_velo_to_cam.txt` and `calib_cam_to_cam.txt` from kitti dataset there.
 
-```
+*You can also change the path of tracklet directory in `my_config.py`*
 
 ### Training
 To train:
@@ -62,15 +46,19 @@ python3 train.py
 
 ### Prediction
 To predict:
-1. Change tracklet date and tracklet file names in ```./utils/read_dir.py``` according to your dataset (if you use kitti).
-2. run `prediction.py` to predict 3D bounding boxes. Change `-d` to your dataset directory, 
-`-a` to specify which type of dataset(train/val split or raw), `-w` to specify the training
-weights. 
+1. Specify parameters in `config.py`.
+2. run `prediction.py` to predict 3D bounding boxes. (predictions for each image are written to folder specified in `my_config`)
+```bash 
+python3 prediction.py
+```
 
 ### Visualization
-To visualize 3D bounding box:
-1. run `visualization3Dbox.py`. Specify `-s` to if save figures or 
-view the plot , specify `-p` to your output image folders. 
+To visualize 3D bounding boxes from predicted files:
+1. Specify parameters in `config.py`.
+2. Run `visualization3Dbox.py`.
+```bash
+python3 visualization3Dbox.py
+```
 
 ## Performance:
 <table>
