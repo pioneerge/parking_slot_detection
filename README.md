@@ -95,7 +95,7 @@ python3 prediction.py
 
 ### Visualization
 To visualize 3D bounding boxes from predicted files:
-Run `visualization3Dbox.py`. Specify `-s` to save image or view plot (save by default).
+Run `visualization3Dbox.py`. Specify `-s` to save image or view plot (save by default). The result images will appear in the `results` directory.
 ```bash
 python3 visualization3Dbox.py
 ```
